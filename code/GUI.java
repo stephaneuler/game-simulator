@@ -76,6 +76,9 @@ public class GUI implements ActionListener, ChangeListener {
 			mi = Utils.addMenuItem(this, menuS2, player);
 			mi.setActionCommand("s2:" + player);
 		}
+		JMenuItem mi = Utils.addMenuItem(this, menuS1, "Human");
+		mi.setActionCommand("s1:Human");
+		
 		Utils.addMenuItem(this, menuOptions, "animate");
 		Utils.addMenuItem(this, menuOptions, "history");
 		graphic.addExternMenu(menuS1);

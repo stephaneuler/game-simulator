@@ -21,6 +21,10 @@ public class Position {
 		this.xsend = xsend;
 	}
 
+	public XSendDE getXsend() {
+		return xsend;
+	}
+
 	public static void toogleAnimateCheck() {
 		 animateCheck = ! animateCheck;
 	}
