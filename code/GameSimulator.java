@@ -1,6 +1,8 @@
 package basic;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -11,15 +13,41 @@ import java.util.Random;
 
 public class GameSimulator {
 	Random random = new Random();
+	String[] playerNames = { "RandomPlayer", "FirstPlayer", "MiddlePlayer", "SeqPlayer" };
+	GUI gui;
+
+	public GameSimulator() {
+		super();
+		gui = new GUI(this);
+	}
+
+	public String[] getPlayerNames() {
+		return playerNames;
+	}
+
+	public void setPlayerNames(String[] playerNames) {
+		this.playerNames = playerNames;
+	}
 
 	public static void main(String[] args) {
 		GameSimulator simu = new GameSimulator();
-		//simu.singleGame();
-		simu.competion();
+		// simu.singleGame();
+		// simu.competion();
+
+	}
+
+	public Position singleGameGUI( Player[] players ) {
+
+		Game game = new Game();
+		game.setGui(gui);
+		Player winner = game.play(players);
+		System.out.println("Winner:" + winner);
+
+		return game.getPosition();
 	}
 
 	private void singleGame() {
-		GUI gui = new GUI();
+		GUI gui = new GUI(this);
 		Map<Player, Integer> scores = new HashMap<>();
 
 		Player[] players = new Player[2];
@@ -42,8 +70,21 @@ public class GameSimulator {
 
 	}
 
-	private void competion() {
-		String[] playerNames = { "RandomPlayer", "FirstPlayer", "MiddlePlayer", "SeqPlayer" };
+	Player playerFromName(String name) {
+		File root = new File(".");
+		URLClassLoader classLoader;
+		try {
+			classLoader = URLClassLoader.newInstance(new URL[] { root.toURI().toURL() });
+			Class<?> c = Class.forName("basic." + name, true, classLoader);
+			return (Player) c.newInstance();
+		} catch (MalformedURLException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String competion() {
 		int NP = 2;
 		Player[] players = new Player[playerNames.length * NP];
 
@@ -62,7 +103,7 @@ public class GameSimulator {
 		} catch (MalformedURLException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return;
+			return null;
 		}
 		int N = players.length;
 
@@ -79,23 +120,28 @@ public class GameSimulator {
 		}
 
 		Arrays.sort(players);
-		showTable(players);
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(os);
+		showTable(players, ps);
+		String output = os.toString();
+		System.out.print( output );
+		return output;
 	}
 
-	private void showTable(Player[] players) {
-		System.out.println("***********************************************************");
+	private void showTable(Player[] players, PrintStream out) {
+		out.println("***********************************************************");
 		for (Player p : players) {
-			System.out.printf("%25s | ", p.toString());
+			out.printf("%25s | ", p.toString());
 			for (Player q : players) {
 				if (p == q) {
-					System.out.printf("   x  ");
+					out.printf("   x  ");
 				} else {
-					System.out.printf("%5d ", p.getScore( q ));
+					out.printf("%5d ", p.getScore(q));
 				}
 
 			}
-			System.out.printf(" | %5d ", p.getTotal() );
-			System.out.println();
+			out.printf(" | %5d ", p.getTotal());
+			out.println();
 		}
 
 	}
