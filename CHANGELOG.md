@@ -2,4 +2,4 @@
 
 Features:
 
-  - first verison with GUI for games and matches 
+  - first verison with GUI for games and matches (requires latest version of jserver.jar)
