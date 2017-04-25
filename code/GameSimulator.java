@@ -42,7 +42,8 @@ public class GameSimulator {
 		game.setGui(gui);
 		Player winner = game.play(players);
 		System.out.println("Winner:" + winner);
-
+		gui.setText("Winner:" + winner);
+		
 		return game.getPosition();
 	}
 

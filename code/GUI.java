@@ -78,6 +78,8 @@ public class GUI implements ActionListener, ChangeListener {
 		}
 		JMenuItem mi = Utils.addMenuItem(this, menuS1, "Human");
 		mi.setActionCommand("s1:Human");
+		mi = Utils.addMenuItem(this, menuS2, "Human");
+		mi.setActionCommand("s2:Human");
 		
 		Utils.addMenuItem(this, menuOptions, "animate");
 		Utils.addMenuItem(this, menuOptions, "history");
@@ -147,6 +149,7 @@ public class GUI implements ActionListener, ChangeListener {
 			System.out.println("S2: " + p2);
 		} else if (cmd.equals("Spiel")) {
 			startButton.setEnabled(false);
+			board.receiveMessage("clearCommands");
 			new Thread() {
 				public void run() {
 					Player[] players = new Player[2];
@@ -193,6 +196,10 @@ public class GUI implements ActionListener, ChangeListener {
 			return XSendAdapter.LIGHTBLUE;
 		} 
 		return 0;
+	}
+
+	public void setText(String text) {
+		xsend.statusText(text);	
 	}
 
 }

@@ -2,6 +2,7 @@ package basic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import jserver.XSendDE;
 import plotter.Sleep;
@@ -15,7 +16,7 @@ public class Position {
 	int ply = 0;
 	boolean win = false;
 	private XSendDE xsend;
-	private List<Move> history = new ArrayList<>(); 
+	private Stack<Move> history = new Stack<>(); 
 
 	public void setXsend(XSendDE xsend) {
 		this.xsend = xsend;
@@ -29,6 +30,14 @@ public class Position {
 		 animateCheck = ! animateCheck;
 	}
 
+	public Move getLastMove() {
+		if( history.isEmpty() ) {
+			return null;
+		}
+		return history.peek();
+	}
+	
+	
 	public String showHistory() {
 		String h = "";
 		for( int i=0; i<history.size(); i++ ) {
@@ -53,7 +62,7 @@ public class Position {
 	}
 
 	public void move(Move move) {
-		history.add( move );
+		history.push( move );
 		
 		// find empty field
 		for (int z = 1; z <= N; z++) {
@@ -66,6 +75,19 @@ public class Position {
 			}
 		}
 
+	}
+
+	public void undo() {
+		if( history.isEmpty() ) {
+			return;
+		}
+		Move move = history.pop();
+		for (int z = 1; z <= N; z++) {
+			if (board[move.s][z] != 0) {
+				board[move.s][z] = 0;
+				return;
+			}
+		}
 	}
 
 	private void checkWin(int s, int z) {
@@ -118,5 +140,6 @@ public class Position {
 	public void nextPlayer() {
 		nextPlayer = -nextPlayer;
 	}
+	
 
 }
