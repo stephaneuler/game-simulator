@@ -40,7 +40,7 @@ public class Game {
 					System.out.println("No more moves");
 					return null;
 				}
-				Move move = player.nextMove(position, moves);
+				Move move = player.nextMove(new Position( position ), moves);
 				position.move(move);
 				if (gui != null) {
 					Sleep.sleep(sleepTime);

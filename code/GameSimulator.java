@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class GameSimulator {
 	Random random = new Random();
-	String[] playerNames = { "RandomPlayer", "FirstPlayer", "MiddlePlayer", "SeqPlayer" };
+	String[] playerNames = { "RandomPlayer", "FirstPlayer", "MiddlePlayer", "SeqPlayer", "Demo" };
 	GUI gui;
 
 	public GameSimulator() {
