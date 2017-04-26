@@ -101,7 +101,7 @@ public class Position {
 		Move move = history.pop();
 		win = false;
 
-		for (int z = 1; z <= N; z++) {
+		for (int z = N-1; z >=0; z--) {
 			if (board[move.s][z] != 0) {
 				board[move.s][z] = 0;
 				return;
