@@ -5,12 +5,25 @@ import java.util.List;
 import plotter.Sleep;
 
 public class Game {
+	static int sleepTime = 500;
+
 	Position position = new Position();
 	GUI gui;
-	int sleepTime = 500;
 
 	public void setGui(GUI gui) {
 		this.gui = gui;
+	}
+
+	public Position getPosition() {
+		return position;
+	}
+
+	public static int getSleepTime() {
+		return sleepTime;
+	}
+
+	public static void setSleepTime(int sleepTime) {
+		Game.sleepTime = sleepTime;
 	}
 
 	public Player play(Player[] players) {
@@ -27,7 +40,7 @@ public class Game {
 					System.out.println("No more moves");
 					return null;
 				}
-				Move move = player.nextMove(position, moves);
+				Move move = player.nextMove(new Position( position ), moves);
 				position.move(move);
 				if (gui != null) {
 					Sleep.sleep(sleepTime);
