@@ -1,7 +1,6 @@
 package basic;
 
 import java.util.List;
-import java.util.Random;
 
 public class SeqPlayer extends Player {
 	int x = 0;
