@@ -15,10 +15,16 @@ public class GameSimulator {
 	Random random = new Random();
 	String[] playerNames = { "RandomPlayer", "FirstPlayer", "MiddlePlayer", "SeqPlayer", "SucherSE" };
 	GUI gui;
+	Game game;
+	int numGames = 500;
 
 	public GameSimulator() {
 		super();
 		gui = new GUI(this);
+	}
+
+	public Game getGame() {
+		return game;
 	}
 
 	public String[] getPlayerNames() {
@@ -38,11 +44,11 @@ public class GameSimulator {
 
 	public Position singleGameGUI( Player[] players ) {
 
-		Game game = new Game();
+		game = new Game();
 		game.setGui(gui);
 		Player winner = game.play(players);
 		System.out.println("Winner:" + winner);
-		gui.setText("Winner:" + winner);
+		//gui.setText("Winner:" + winner);
 		
 		return game.getPosition();
 	}
@@ -98,6 +104,7 @@ public class GameSimulator {
 				Class<?> c = Class.forName("basic." + playerNames[i], true, classLoader);
 				for (int n = 0; n < NP; n++) {
 					players[j] = (Player) c.newInstance();
+					players[j].setName( "P" +j);
 					++j;
 				}
 			}
@@ -110,7 +117,7 @@ public class GameSimulator {
 
 		for (int i = 0; i < N - 1; i++) {
 			for (int j = i + 1; j < N; j++) {
-				Match match = new Match(players[i], players[j], 1000);
+				Match match = new Match(players[i], players[j], numGames);
 				Map<Player, Integer> scores = match.play();
 
 				System.out.println(scores);

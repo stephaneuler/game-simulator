@@ -29,12 +29,20 @@ public class Match {
 				players[0] = p2;
 				players[1] = p1;				
 			}
+			p1.reset();
+			p2.reset();
+			
 			Game game = new Game();
 			Player winner = game.play(players);
-			//System.out.println("Winner:" + winner);
-			if (winner != null) {
-				scores.put(winner, scores.get(winner) + 1);
+			System.out.println(p1 + " - " + p2 + " Winner:" + winner);
+			System.out.println( game.getPosition().showHistory() );
+			if (winner == null) {
+				scores.put(p1, scores.get(p1) + 1);
+				scores.put(p2, scores.get(p2) + 1);
+			} else {
+				scores.put(winner, scores.get(winner) + 2);
 			}
+			//System.out.println(scores);
 		}		
 		return scores;
 	}

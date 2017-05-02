@@ -18,26 +18,33 @@ import jserver.XSendAdapter;
 import jserver.XSendDE;
 import plotter.Graphic;
 
+//Version wer  wann     was
+//.1      se   17-04    erste stabile Version
+//.15     se   17-05-02 verbessertes GUI
+
 public class GUI implements ActionListener, ChangeListener {
 	static final int SLEEP_MIN = 30;
 	static final int SLEEP_MAX = 1000;
 	static final int SLEEP_INIT = SLEEP_MAX / 2;
+	static final String version = "0.15 Mai 17";
 
 	private int N = 7;
 	private XSendDE xsend;
 	private GameSimulator gameSimulator;
 	private Board board;
 	private boolean verbose = true;
-	private String p1;
-	private String p2;
+	private String p1Name;
+	private String p2Name;
 	private JButton startButton = new JButton("Spiel");
+	private JButton pauseButton = new JButton("Pause");
 	private JButton matchButton = new JButton("Match");
 	private Position position;
 
 	public GUI(GameSimulator gameSimulator) {
 		this.gameSimulator = gameSimulator;
 		board = new Board();
-		buildComponents();
+		
+		board.receiveMessage("statusfontsize 16");
 		xsend = new XSendAdapter(board);
 		xsend.groesse(N + 2, N + 2);
 		for (int i = 0; i < N + 2; i++) {
@@ -51,6 +58,7 @@ public class GUI implements ActionListener, ChangeListener {
 				xsend.symbolGroesse2(x, y, 0.45);
 			}
 		}
+		buildComponents();
 	}
 
 	public XSendDE getXsend() {
@@ -61,9 +69,9 @@ public class GUI implements ActionListener, ChangeListener {
 		Graphic graphic = board.getGraphic();
 		String[] players = gameSimulator.getPlayerNames();
 
-		graphic.setTitle("Game Simulator");
-		p1 = players[0];
-		p2 = players[0];
+		graphic.setTitle("Game Simulator V" + version);
+		p1Name = players[0];
+		p2Name = players[0];
 
 		graphic.getJMenuBar().removeAll();
 		JMenu menuS1 = new JMenu("Spieler 1");
@@ -90,6 +98,10 @@ public class GUI implements ActionListener, ChangeListener {
 		startButton.addActionListener(this);
 		graphic.addSouthComponent(startButton);
 
+		pauseButton.addActionListener(this);
+		pauseButton.setEnabled(false);
+		graphic.addSouthComponent(pauseButton);
+
 		matchButton.addActionListener(this);
 		graphic.addSouthComponent(matchButton);
 		
@@ -102,11 +114,12 @@ public class GUI implements ActionListener, ChangeListener {
 
 		graphic.addSouthComponent(sleepTimeSlider);
 
+		setStatusText( null );
 
 	}
 
 	public void show(Position p) {
-		xsend.statusText(p1 + " - " + p2 + "  Ply " + p.ply);
+		setStatusText( p );
 		for (int x = 1; x <= N; x++) {
 			for (int y = 1; y <= N; y++) {
 				int here = p.board[x][y];
@@ -142,24 +155,32 @@ public class GUI implements ActionListener, ChangeListener {
 		}
 
 		if (cmd.startsWith("s1:")) {
-			p1 = cmd.substring(3);
-			System.out.println("S1: " + p1);
+			p1Name = cmd.substring(3);
+			setStatusText();
 		} else if (cmd.startsWith("s2:")) {
-			p2 = cmd.substring(3);
-			System.out.println("S2: " + p2);
+			p2Name = cmd.substring(3);
+			setStatusText();
 		} else if (cmd.equals("Spiel")) {
 			startButton.setEnabled(false);
+			pauseButton.setEnabled(true);
 			board.receiveMessage("clearCommands");
 			new Thread() {
 				public void run() {
 					Player[] players = new Player[2];
 
-					players[0] = gameSimulator.playerFromName(p1);
-					players[1] = gameSimulator.playerFromName(p2);
+					players[0] = gameSimulator.playerFromName(p1Name);
+					players[1] = gameSimulator.playerFromName(p2Name);
 
 					position = gameSimulator.singleGameGUI(players);
 					startButton.setEnabled(true);
-				}
+					pauseButton.setEnabled(false);
+					
+					if( position.getWinner() == 1 ) {
+						setText("<html>Winner: <span style='color:red'>" + p1Name + "</span>");
+					} else {
+						setText("<html>Winner: <span style='color:blue'>" + p2Name + "</span>");
+					}
+				} 
 			}.start();
 
 		} else if (cmd.equals("Match")) {
@@ -167,7 +188,7 @@ public class GUI implements ActionListener, ChangeListener {
 				public void run() {
 					String result = gameSimulator.competion();
 					
-					InfoBox info = new InfoBox(board.getGraphic(), "", 800, 400);
+					InfoBox info = new InfoBox(board.getGraphic(), "", 1200, 400);
 					info.setTitle( "Ergebnis");
 					info.getTextArea().setFont( new Font("Consolas", Font.PLAIN, 16) );
 					info.getTextArea().setText( result );
@@ -178,6 +199,9 @@ public class GUI implements ActionListener, ChangeListener {
 		} else if (cmd.equals("animate")) {
 			Position.toogleAnimateCheck();
 			xsend.getBoard().receiveMessage("clearAllText");
+			
+		} else if (cmd.equals("Pause")) {
+			gameSimulator.getGame().togglePause();
 			
 		} else if (cmd.equals("history")) {
 			InfoBox info = new InfoBox(board.getGraphic(), "", 800, 400);
@@ -201,5 +225,21 @@ public class GUI implements ActionListener, ChangeListener {
 	public void setText(String text) {
 		xsend.statusText(text);	
 	}
+
+	private void setStatusText() {
+		setStatusText( null );		
+	}
+
+	private void setStatusText(Position p) {
+		String text = "";
+		text += "<html><span style='color:red'>" + p1Name + "</span> - ";
+		text += "<html><span style='color:blue'>" + p2Name + "</span>";
+		if( p != null ) {
+			text += "  Ply " + p.ply;
+		}
+		text += "</html>";
+		xsend.statusText( text );	
+	}
+
 
 }

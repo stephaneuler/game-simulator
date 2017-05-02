@@ -38,6 +38,10 @@ public abstract class Player implements Comparable<Object> {
 		return total;
 	}
 
+	public void reset() {
+		// children overwrite this method to clean up before next game
+	}
+
 	@Override
 	public int compareTo(Object o) {
 		Player p2 = (Player) o;

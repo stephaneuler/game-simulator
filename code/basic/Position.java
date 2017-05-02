@@ -13,6 +13,7 @@ public class Position {
 	int N = 7;
 	int[][] board = new int[N + 2][N + 2];
 	int nextPlayer = 1;
+	int winner = 0;
 	int ply = 0;
 	boolean win = false;
 	private XSendDE xsend;
@@ -31,6 +32,10 @@ public class Position {
 	}
 
 	public Position() {
+	}
+
+	public int getWinner() {
+		return winner;
 	}
 
 	public void setXsend(XSendDE xsend) {
@@ -159,6 +164,7 @@ public class Position {
 		}
 		if (q >= 4) {
 			win = true;
+			winner  = nextPlayer;
 		}
 		if (animateCheck & xsend != null) {
 			Sleep.sleep(400);

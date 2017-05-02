@@ -6,6 +6,7 @@ import plotter.Sleep;
 
 public class Game {
 	static int sleepTime = 500;
+	boolean pause = false;
 
 	Position position = new Position();
 	GUI gui;
@@ -34,10 +35,14 @@ public class Game {
 
 		for (;;) {
 			for (Player player : players) {
+				while( pause ) {
+					Sleep.sleep(100);
+				}
 				List<Move> moves = position.getMoves();
 				// System.out.println(moves);
 				if (moves.isEmpty()) {
-					System.out.println("No more moves");
+					//System.out.println("No more moves");
+					// No winner
 					return null;
 				}
 				Move move = player.nextMove(new Position( position ), moves);
@@ -55,6 +60,10 @@ public class Game {
 
 		}
 
+	}
+
+	public void togglePause() {
+		pause  = ! pause;
 	}
 
 }
