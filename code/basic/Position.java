@@ -94,6 +94,9 @@ public class Position {
 
 	}
 
+	/**
+	 * undo the last move: remove the top piece in the column of the last move
+	 */
 	public void undo() {
 		if (history.isEmpty()) {
 			return;
@@ -101,35 +104,43 @@ public class Position {
 		Move move = history.pop();
 		win = false;
 
-		for (int z = N-1; z >=0; z--) {
-			if (board[move.s][z] != 0) {
-				board[move.s][z] = 0;
+		for (int y = N-1; y >=0; y--) {
+			if (board[move.s][y] != 0) {
+				board[move.s][y] = 0;
 				return;
 			}
 		}
 	}
 
-	private void checkWin(int s, int z) {
+	private void checkWin(int x, int y) {
 		if (animateCheck & xsend != null) {
-			xsend.text2(s, z, "" + nextPlayer);
-			xsend.farbe2(s, z, GUI.lightColor(nextPlayer));
+			xsend.text2(x, y, "" + nextPlayer);
+			xsend.farbe2(x, y, GUI.lightColor(nextPlayer));
 		}
 
-		check(s, z, 1, 0);
-		check(s, z, 0, 1);
-		check(s, z, 1, 1);
-		check(s, z, -1, 1);
+		check(x, y, 1, 0);
+		check(x, y, 0, 1);
+		check(x, y, 1, 1);
+		check(x, y, -1, 1);
 
 	}
 
-	private void check(int s, int z, int dx, int dy) {
+	/**
+	 * check for a group of 4 pieces around a given position.
+	 * 
+	 * @param x the x-coordinate of the position
+	 * @param y the y-coordinate of the position
+	 * @param dx
+	 * @param dy
+	 */
+	private void check(int x, int y, int dx, int dy) {
 		int q = 1;
 		for (int i = 1; i < 4; i++) {
 			if (animateCheck & xsend != null) {
-				xsend.text2(s + i * dx, z + i * dy, "" + q);
+				xsend.text2(x + i * dx, y + i * dy, "" + q);
 				Sleep.sleep(200);
 			}
-			if (board[s + i * dx][z + i * dy] == nextPlayer) {
+			if (board[x + i * dx][y + i * dy] == nextPlayer) {
 				++q;
 			} else {
 				break;
@@ -137,10 +148,10 @@ public class Position {
 		}
 		for (int i = -1; i > -4; i--) {
 			if (animateCheck & xsend != null) {
-				xsend.text2(s + i * dx, z + i * dy, "" + q);
+				xsend.text2(x + i * dx, y + i * dy, "" + q);
 				Sleep.sleep(200);
 			}
-			if (board[s + i * dx][z + i * dy] == nextPlayer) {
+			if (board[x + i * dx][y + i * dy] == nextPlayer) {
 				++q;
 			} else {
 				break;

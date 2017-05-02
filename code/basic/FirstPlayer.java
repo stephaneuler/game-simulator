@@ -2,7 +2,7 @@ package basic;
 
 import java.util.List;
 
-public class FirstPlayer extends basic.Player {
+public class FirstPlayer extends Player {
 
 	@Override
 	Move nextMove(Position p, List<Move> moves) {
