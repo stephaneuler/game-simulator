@@ -176,9 +176,11 @@ public class GUI implements ActionListener, ChangeListener {
 					pauseButton.setEnabled(false);
 					
 					if( position.getWinner() == 1 ) {
-						setText("<html>Winner: <span style='color:red'>" + p1Name + "</span>");
+						setText("<html>Sieger: <span style='color:red'>" + p1Name + "</span>");
+					} else if( position.getWinner() == -1 ){
+						setText("<html>Sieger: <span style='color:blue'>" + p2Name + "</span>");
 					} else {
-						setText("<html>Winner: <span style='color:blue'>" + p2Name + "</span>");
+						setText("Remis");
 					}
 				} 
 			}.start();
