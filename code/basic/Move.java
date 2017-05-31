@@ -8,6 +8,10 @@ public class Move {
 		this.s = s;
 	}
 
+	public Move(String line) {
+		this( Integer.parseInt(line));
+	}
+
 	@Override
 	public String toString() {
 		return "Move [s=" + s + "]";

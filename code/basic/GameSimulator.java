@@ -8,15 +8,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class GameSimulator {
 	Random random = new Random();
-	String[] playerNames = { "RandomPlayer", "FirstPlayer", "MiddlePlayer", "SeqPlayer", "SucherSE" };
 	GUI gui;
 	Game game;
-	int numGames = 500;
+	CompetionSetup competionSetup = new CompetionSetup();
 
 	public GameSimulator() {
 		super();
@@ -27,12 +27,8 @@ public class GameSimulator {
 		return game;
 	}
 
-	public String[] getPlayerNames() {
-		return playerNames;
-	}
-
-	public void setPlayerNames(String[] playerNames) {
-		this.playerNames = playerNames;
+	public List<String> getPlayerNames() {
+		return competionSetup.getPlayerNames();
 	}
 
 	public static void main(String[] args) {
@@ -91,17 +87,24 @@ public class GameSimulator {
 		}
 	}
 
+	public String competion(CompetionSetup competionSetup) {
+		this.competionSetup = competionSetup;
+		return competion();
+	}
+
 	public String competion() {
-		int NP = 2;
-		Player[] players = new Player[playerNames.length * NP];
+		
+		List<String> playerNames = competionSetup.getPlayerNames();
+		int NP = competionSetup.getNumCopies();
+		Player[] players = new Player[playerNames.size() * NP];
 
 		File root = new File(".");
 		URLClassLoader classLoader;
 		try {
 			classLoader = URLClassLoader.newInstance(new URL[] { root.toURI().toURL() });
 			int j = 0;
-			for (int i = 0; i < playerNames.length; i++) {
-				Class<?> c = Class.forName("basic." + playerNames[i], true, classLoader);
+			for (int i = 0; i < playerNames.size(); i++) {
+				Class<?> c = Class.forName("basic." + playerNames.get(i), true, classLoader);
 				for (int n = 0; n < NP; n++) {
 					players[j] = (Player) c.newInstance();
 					players[j].setName( "P" +j);
@@ -117,7 +120,7 @@ public class GameSimulator {
 
 		for (int i = 0; i < N - 1; i++) {
 			for (int j = i + 1; j < N; j++) {
-				Match match = new Match(players[i], players[j], numGames);
+				Match match = new Match(players[i], players[j], competionSetup.getNumGames() );
 				Map<Player, Integer> scores = match.play();
 
 				System.out.println(scores);
@@ -139,7 +142,7 @@ public class GameSimulator {
 	private void showTable(Player[] players, PrintStream out) {
 		out.println("***********************************************************");
 		for (Player p : players) {
-			out.printf("%25s | ", p.toString());
+			out.printf("%30s | ", p.toString());
 			for (Player q : players) {
 				if (p == q) {
 					out.printf("   x  ");

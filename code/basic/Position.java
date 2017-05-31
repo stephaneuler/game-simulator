@@ -1,9 +1,13 @@
 package basic;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import jserver.ColorNames;
 import jserver.XSendDE;
 import plotter.Sleep;
 
@@ -11,6 +15,7 @@ public class Position {
 	private static boolean animateCheck = false;
 
 	int N = 7;
+	// make the board larger, add borders
 	int[][] board = new int[N + 2][N + 2];
 	int nextPlayer = 1;
 	int winner = 0;
@@ -24,8 +29,8 @@ public class Position {
 		win = position.win;
 		xsend = position.xsend;
 		history = (Stack<Move>) position.history.clone();
-		for (int x = 1; x <= N; x++) {
-			for (int y = 1; y <= N; y++) {
+		for (int x = 0; x < board.length; x++) {
+			for (int y = 0; y < board[x].length; y++) {
 				board[x][y] = position.board[x][y];
 			}
 		}
@@ -60,7 +65,20 @@ public class Position {
 	public String showHistory() {
 		String h = "";
 		for (int i = 0; i < history.size(); i++) {
-			h += "P" + (i % 2 + 1) + " " + history.get(i).s + "; ";
+			h += ColorNames.getName(GUI.color(i % 2 * -2 + 1)) + " " + history.get(i).s + "; ";
+		}
+		return h;
+	}
+
+	public String showHistoryTable() {
+		String h = "";
+		for (int i = 0; i < history.size(); i += 2) {
+			h += (i/2+1) + ".) ";
+			h += history.get(i).s + " - ";
+			if (i + 1 < history.size()) {
+				h += history.get(i + 1).s;
+			}
+			h += System.lineSeparator();
 		}
 		return h;
 	}
@@ -109,7 +127,7 @@ public class Position {
 		Move move = history.pop();
 		win = false;
 
-		for (int y = N-1; y >=0; y--) {
+		for (int y = N - 1; y >= 0; y--) {
 			if (board[move.s][y] != 0) {
 				board[move.s][y] = 0;
 				return;
@@ -133,8 +151,10 @@ public class Position {
 	/**
 	 * check for a group of 4 pieces around a given position.
 	 * 
-	 * @param x the x-coordinate of the position
-	 * @param y the y-coordinate of the position
+	 * @param x
+	 *            the x-coordinate of the position
+	 * @param y
+	 *            the y-coordinate of the position
 	 * @param dx
 	 * @param dy
 	 */
@@ -164,7 +184,7 @@ public class Position {
 		}
 		if (q >= 4) {
 			win = true;
-			winner  = nextPlayer;
+			winner = nextPlayer;
 		}
 		if (animateCheck & xsend != null) {
 			Sleep.sleep(400);
@@ -175,6 +195,48 @@ public class Position {
 
 	public void nextPlayer() {
 		nextPlayer = -nextPlayer;
+	}
+
+	public void print() {
+		for (int y = N - 1; y > 0; y--) {
+			for (int x = 1; x <= N; x++) {
+				System.out.print(board[x][y] + " ");
+			}
+			System.out.println();
+		}
+
+	}
+
+	public void save(String filename) {
+		String t = "";
+		for (Move m : history) {
+			t += m.s + System.lineSeparator();
+		}
+
+		try {
+			Files.write(Paths.get(filename), t.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	public void load(String filename) {
+		List<String> lines;
+		try {
+			lines = Files.readAllLines(Paths.get(filename));
+			for (String line : lines) {
+				System.out.println("line read: " + line);
+				move(new Move(line));
+				nextPlayer();
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }
