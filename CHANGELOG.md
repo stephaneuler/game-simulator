@@ -1,4 +1,10 @@
 
+## 0.4 (2021-11-03)
+
+Features:
+
+  - new player PositionPlayer
+
 ## 0.2 (2017-05-31)
 
 Features:
