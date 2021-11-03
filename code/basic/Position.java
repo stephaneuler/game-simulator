@@ -2,7 +2,7 @@ package basic;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -81,7 +81,7 @@ public abstract class Position {
 
 	}
 
-	public static Position load(String filename) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static Position load(String filename) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		List<String> lines;
 		lines = Files.readAllLines(Paths.get(filename));
 		String head = lines.remove(0);
@@ -92,7 +92,7 @@ public abstract class Position {
 			classLoader = URLClassLoader.newInstance(new URL[] { root.toURI().toURL() });
 			Class<?> c = Class.forName(gameType, true, classLoader);
 			
-		Position position = (Position) c.newInstance();
+		Position position = (Position) c.getDeclaredConstructor().newInstance();
 		position.getMovesFromLines( lines );
 		return position;
 	}

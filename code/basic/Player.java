@@ -39,6 +39,10 @@ public abstract class Player implements Comparable<Object> {
 	public int getTotal() {
 		return totalScore;
 	}
+	
+	public boolean knowsPosition( Position p ) {
+		return true;
+	}
 
 	public void reset() {
 		// children overwrite this method to clean up before next game

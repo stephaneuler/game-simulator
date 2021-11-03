@@ -7,6 +7,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -98,7 +99,10 @@ public class GUI implements ActionListener, ChangeListener {
 	private void setUpBoard() {
 		board.setSize(600, 500);
 		board.receiveMessage("statusfontsize 16");
+		board.receiveMessage("borderWidth  3");
+
 		xsend = new XSendAdapter(board);
+		xsend.rahmen( XSendAdapter.BLACK );
 		drawBoard();
 	}
 
@@ -401,7 +405,7 @@ public class GUI implements ActionListener, ChangeListener {
 				position = Position.load(filename);
 				resetWin();
 				show(position);
-			} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			} catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				JOptionPane.showMessageDialog(null, e.toString(), "fileload", JOptionPane.ERROR_MESSAGE);
 			}
 		}

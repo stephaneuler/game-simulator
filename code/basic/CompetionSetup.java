@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CompetionSetup {
-	private String[] allPlayerNames = { "RandomPlayer", "FirstPlayer", "LastPlayer", "MiddlePlayer", "SeqPlayer", "SucherSE",
-			};
+	private String[] allPlayerNames = { "RandomPlayer", "FirstPlayer", "LastPlayer", "MiddlePlayer",
+			"SeqPlayer", "SucherSE", "PositionPlayer", };
 	private List<String> playerNames = new ArrayList<>();
 	private int numGames = 5;
 	private int numCopies = 2;

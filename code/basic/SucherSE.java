@@ -18,7 +18,7 @@ public class SucherSE extends Player {
 			p.undo();
 		}
 		
-		// opponent would with next move?
+		// opponent would win with next move?
 		p.nextPlayer();
 		for( Move m : moves ) {
 			p.move( m );
